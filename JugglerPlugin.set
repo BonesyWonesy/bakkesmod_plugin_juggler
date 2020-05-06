@@ -1,0 +1,7 @@
+Juggler Plugin
+9|This plugin tracks the amount of times you hit the ball before it touched the ground, and how long it was in the air for
+1|Enable Juggler|cl_juggler_plugin_enabled
+5|Juggler Position X|cl_juggler_plugin_posx|0|10000
+5|Juggler Position Y|cl_juggler_plugin_posy|0|10000
+0|Reset Highest Hit Count|JugglerResetHitCount
+0|Reset Highest Air Time|JugglerResetAirTime
