@@ -2,7 +2,7 @@
 #include "HelperFunctions.h"
 
 Juggler::Juggler()
-  : m_totalHits(0), m_highestHits(0), m_secondsInAir(0), m_highestSecondsInAir(0), m_lastSecondsInAir(0), m_lastTotalHits(0) {
+  : m_totalAttempts(0), m_totalHits(0), m_highestHits(0), m_secondsInAir(0), m_highestSecondsInAir(0), m_lastSecondsInAir(0), m_lastTotalHits(0), m_averageSecondsInAir(0) {
 }
 
 Juggler::~Juggler() {
@@ -37,7 +37,15 @@ void Juggler::Reset() {
 
   if (m_secondsInAir != m_lastSecondsInAir && m_secondsInAir != 0) {
     m_lastSecondsInAir = m_secondsInAir;
+
+    if (m_secondsInAir > m_highestSecondsInAir) {
+      m_highestSecondsInAir = m_secondsInAir;
+    }
+
+    m_averageSecondsInAir = (m_totalAttempts * m_averageSecondsInAir) / (m_totalAttempts + 1);
   }
+
+  m_totalAttempts++;
 
   if (m_totalHits != 0) {
     m_totalHits = 0;
@@ -66,6 +74,13 @@ void Juggler::ResetHighestAirTime() {
   m_highestSecondsInAir = 0;
 }
 
+void Juggler::ResetAll() {
+  m_totalAttempts = 0;
+  m_highestHits = 0;
+  m_highestSecondsInAir = 0;
+  m_averageSecondsInAir = 0;
+}
+
 void Juggler::Render(CanvasWrapper& canvas, std::shared_ptr<GameWrapper>  gameWrapper, int xPos, int yPos) {
 
   auto screenSize = canvas.GetSize();
@@ -73,12 +88,6 @@ void Juggler::Render(CanvasWrapper& canvas, std::shared_ptr<GameWrapper>  gameWr
   Vector2 drawPosition = { xPos, yPos };
   canvas.SetPosition(drawPosition);
   canvas.SetColor(255, 255, 255, 255);
-
-  double seconds = m_timer.ElapsedSeconds();
-
-  if (seconds > m_highestSecondsInAir) {
-    m_highestSecondsInAir = seconds;
-  }
 
   canvas.DrawString(std::string("Juggle Count:"), 2.5f, 2.5f);
 
@@ -100,7 +109,7 @@ void Juggler::Render(CanvasWrapper& canvas, std::shared_ptr<GameWrapper>  gameWr
 
   drawPosition.Y += 38;
   canvas.SetPosition(drawPosition);
-  canvas.DrawString(std::string("Current: ") + to_string(seconds, 2), 2, 2);
+  canvas.DrawString(std::string("Current: ") + to_string(m_timer.ElapsedSeconds(), 2), 2, 2);
 
   drawPosition.Y += 30;
   canvas.SetPosition(drawPosition);
@@ -109,4 +118,8 @@ void Juggler::Render(CanvasWrapper& canvas, std::shared_ptr<GameWrapper>  gameWr
   drawPosition.Y += 30;
   canvas.SetPosition(drawPosition);
   canvas.DrawString(std::string("Best: ") + to_string(m_highestSecondsInAir, 2), 2, 2);
+
+  drawPosition.Y += 30;
+  canvas.SetPosition(drawPosition);
+  canvas.DrawString(std::string("Avg: ") + to_string(m_averageSecondsInAir, 2), 2, 2);
 }

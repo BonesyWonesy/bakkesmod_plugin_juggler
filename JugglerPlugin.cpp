@@ -34,15 +34,17 @@ void JugglerPlugin::onLoad() {
 	// Game is cleaning up
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", bind(&JugglerPlugin::OnFreeplayDestroy, this, std::placeholders::_1));
 
-	// Ball hits ground
+	// Juggle ends
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventHitGround", bind(&JugglerPlugin::OnBallHitGround, this, std::placeholders::_1));
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.EndState", bind(&JugglerPlugin::OnBallHitGround, this, std::placeholders::_1));
 
 	// Car hits ball
 	gameWrapper->HookEvent("Function TAGame.Car_TA.EventHitBall", bind(&JugglerPlugin::OnCarHitBall, this, std::placeholders::_1));
 
 	// Pause menu
 	gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&JugglerPlugin::OnPauseMenu, this, std::placeholders::_1));
-
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.AddPauser", bind(&JugglerPlugin::OnPauseMenu, this, std::placeholders::_1));
+	
 	// On Unpause
 	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&JugglerPlugin::OnUnpause, this, std::placeholders::_1));
 }
