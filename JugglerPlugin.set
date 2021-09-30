@@ -5,3 +5,5 @@ Juggler Plugin
 5|Juggler Position Y|cl_juggler_plugin_posy|0|10000
 0|Reset Highest Hit Count|JugglerResetHitCount
 0|Reset Highest Air Time|JugglerResetAirTime
+0|Reset Average Air Time|JugglerResetAverageAirTime
+0|Reset All|JugglerResetAll

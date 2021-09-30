@@ -14,6 +14,8 @@ public:
 
   void ResetHighestHits();
   void ResetHighestAirTime();
+  void ResetAverageAirTime();
+  void ResetAll();
 
   void HitBall();
   void Reset();
@@ -21,6 +23,7 @@ public:
   void Unpause();
 
 private:
+  unsigned m_totalAttempts;
   unsigned m_totalHits;
   unsigned m_highestHits;
 
@@ -29,6 +32,11 @@ private:
 
   double m_secondsInAir;
   double m_highestSecondsInAir;
+  double m_averageSecondsInAir;
+
+  bool m_ballIsAirborne;
+
+  double m_cumulativeAirTimes;
 
   Timer m_timer;
 };

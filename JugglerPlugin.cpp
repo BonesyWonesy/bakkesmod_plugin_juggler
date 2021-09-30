@@ -1,6 +1,7 @@
 #include "JugglerPlugin.h"
+using namespace std;
 
-BAKKESMOD_PLUGIN(JugglerPlugin, "Juggler", "1.0", PLUGINTYPE_FREEPLAY | PLUGINTYPE_CUSTOM_TRAINING)
+BAKKESMOD_PLUGIN(JugglerPlugin, "Juggler", "1.1", PLUGINTYPE_FREEPLAY | PLUGINTYPE_CUSTOM_TRAINING)
 
 JugglerPlugin::JugglerPlugin() {
 	m_loaded = false;
@@ -27,6 +28,14 @@ void JugglerPlugin::onLoad() {
 		m_juggler.ResetHighestAirTime();
 		}, "", 0);
 
+	cvarManager->registerNotifier("JugglerResetAverageAirTime", [this](std::vector<string> commands) {
+		m_juggler.ResetAverageAirTime();
+		}, "", 0);
+
+	cvarManager->registerNotifier("JugglerResetAll", [this](std::vector<string> commands) {
+		m_juggler.ResetAll();
+		}, "", 0);
+
 
 	// Game is started
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Init", bind(&JugglerPlugin::OnFreeplayLoad, this, std::placeholders::_1));
@@ -34,14 +43,16 @@ void JugglerPlugin::onLoad() {
 	// Game is cleaning up
 	gameWrapper->HookEvent("Function TAGame.GameEvent_TA.Destroyed", bind(&JugglerPlugin::OnFreeplayDestroy, this, std::placeholders::_1));
 
-	// Ball hits ground
+	// Juggle ends
 	gameWrapper->HookEvent("Function TAGame.Ball_TA.EventHitGround", bind(&JugglerPlugin::OnBallHitGround, this, std::placeholders::_1));
+	gameWrapper->HookEvent("Function GameEvent_Soccar_TA.Active.EndState", bind(&JugglerPlugin::OnBallHitGround, this, std::placeholders::_1));
 
 	// Car hits ball
 	gameWrapper->HookEvent("Function TAGame.Car_TA.EventHitBall", bind(&JugglerPlugin::OnCarHitBall, this, std::placeholders::_1));
 
-	// Pause menu
+	// Game Paused
 	gameWrapper->HookEvent("Function TAGame.PlayerController_TA.OnOpenPauseMenu", bind(&JugglerPlugin::OnPauseMenu, this, std::placeholders::_1));
+	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.AddPauser", bind(&JugglerPlugin::OnPauseMenu, this, std::placeholders::_1));
 
 	// On Unpause
 	gameWrapper->HookEvent("Function ProjectX.GameInfo_X.RemovePauser", bind(&JugglerPlugin::OnUnpause, this, std::placeholders::_1));
